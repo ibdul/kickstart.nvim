@@ -556,6 +556,28 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      -- tsserver
+      local inlayHints = {
+        includeInlayParameterNameHints = 'all',
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      }
+      require('lspconfig').tsserver.setup {
+        settings = {
+          typescript = {
+            inlayHints = inlayHints,
+          },
+          javascript = {
+            inlayHints = inlayHints,
+          },
+        },
+      }
+
       require('mason-lspconfig').setup {
         automatic_enable = true,
         ensure_installed = { 'lua_ls', 'ts_ls' },

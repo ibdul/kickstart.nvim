@@ -342,9 +342,12 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-      'williamboman/mason-lspconfig.nvim',
+      -- Mason must be loaded before its dependents so we need to set it up here.
+      -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+      { 'mason-org/mason.nvim', opts = {} },
+      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'jose-elias-alvarez/typescript.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -352,6 +355,24 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+
+      -- Allows extra capabilities provided by blink.cmp
+      'saghen/blink.cmp',
+    },
+    opts = {
+      inlay_hints = {
+        enabled = true,
+      },
+      setup = {
+        ts_ls = function(_, opts)
+          require('typescript').setup { server = opts }
+          return true
+        end,
+        tsserver = function(_, opts)
+          require('typescript').setup { server = opts }
+          return true
+        end,
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -495,50 +516,26 @@ require('lazy').setup({
         -- gopls = {},
         -- pyright = {},
         rust_analyzer = {},
-        tsserver = {
-          typescript = {
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-          },
-          javascript = {
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-          },
-        },
         volar = {},
         -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+        ts_ls = {},
+        --[[ lua_ls = { ]]
+        -- cmd = {...},
+        -- filetypes = { ...},
+        -- capabilities = {},
+        --[[ settings = { ]]
+        --[[   Lua = { ]]
+        --[[     hint = { enable = true }, ]]
+        --[[     completion = { ]]
+        --[[       callSnippet = 'Replace', ]]
+        --[[     }, ]]
+        --[[     -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings ]]
+        --[[     -- diagnostics = { disable = { 'missing-fields' } }, ]]
+        --[[   }, ]]
+        --[[ }, ]]
+        --[[ }, ]]
 
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              hint = { enable = true },
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
+        lua_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -549,6 +546,8 @@ require('lazy').setup({
       --  You can press `g?` for help in this menu.
       require('mason').setup()
 
+      --[[ require('virtualtypes').on_attach() ]]
+
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
@@ -558,6 +557,10 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        automatic_enable = true,
+        ensure_installed = { 'lua_ls', 'ts_ls' },
+        --[[ ensure_installed = ensure_installed, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer) ]]
+        automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}

@@ -1,3 +1,6 @@
 return {
-	"27justin/virtuality.nvim"
+  '27justin/virtuality.nvim',
+
+  opts = {},
+  config = function() end,
 }

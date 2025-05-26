@@ -23,7 +23,7 @@ return {
       -- Your COQ settings here
     }
   end,
-  config = function()
-    -- Your LSP settings here
-  end,
+  --[[ config = function() ]]
+  --[[   -- Your LSP settings here ]]
+  --[[ end, ]]
 }

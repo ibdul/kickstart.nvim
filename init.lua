@@ -590,11 +590,14 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            --[[ require('lspconfig')[server_name].setup(server) ]]
-            vim.lsp.config(server_name, server)
+            require('lspconfig')[server_name].setup(server)
+
             local coq = require 'coq'
+            require('lspconfig')[server_name].setup(coq.lsp_ensure_capabilities(server)) -- after
+            vim.lsp.config(server_name, server)
             vim.lsp.config(server_name, coq.lsp_ensure_compatibility(server))
             vim.lsp.enable(server_name)
+            --
           end,
         },
       }

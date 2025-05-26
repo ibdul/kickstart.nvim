@@ -516,7 +516,7 @@ require('lazy').setup({
         -- gopls = {},
         -- pyright = {},
         rust_analyzer = {},
-        volar = {},
+        --[[ volar = {}, ]]
         -- html = { filetypes = { 'html', 'twig', 'hbs'} },
         ts_ls = {},
         --[[ lua_ls = { ]]

@@ -368,10 +368,10 @@ require('lazy').setup({
           require('typescript').setup { server = opts }
           return true
         end,
-        --[[ tsserver = function(_, opts) ]]
-        --[[   require('typescript').setup { server = opts } ]]
-        --[[   return true ]]
-        --[[ end, ]]
+        tsserver = function(_, opts)
+          require('typescript').setup { server = opts }
+          return true
+        end,
       },
     },
     config = function()
@@ -518,7 +518,7 @@ require('lazy').setup({
         rust_analyzer = {},
         --[[ volar = {}, ]]
         -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-        --[[ ts_ls = {}, ]]
+        ts_ls = {},
         --[[ lua_ls = { ]]
         -- cmd = {...},
         -- filetypes = { ...},
@@ -567,23 +567,20 @@ require('lazy').setup({
         includeInlayFunctionLikeReturnTypeHints = true,
         includeInlayEnumMemberValueHints = true,
       }
-      --[[ require('lspconfig').tsserver.setup { ]]
-      --[[   settings = { ]]
-      --[[     typescript = { ]]
-      --[[       inlayHints = inlayHints, ]]
-      --[[     }, ]]
-      --[[     javascript = { ]]
-      --[[       inlayHints = inlayHints, ]]
-      --[[     }, ]]
-      --[[   }, ]]
-      --[[ } ]]
+      require('lspconfig').tsserver.setup {
+        settings = {
+          typescript = {
+            inlayHints = inlayHints,
+          },
+          javascript = {
+            inlayHints = inlayHints,
+          },
+        },
+      }
 
       require('mason-lspconfig').setup {
         automatic_enable = true,
-        ensure_installed = {
-          'lua_ls',
-          --[[ 'ts_ls', ]]
-        },
+        ensure_installed = { 'lua_ls', 'ts_ls' },
         --[[ ensure_installed = ensure_installed, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer) ]]
         automatic_installation = true,
         handlers = {

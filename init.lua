@@ -361,7 +361,7 @@ require('lazy').setup({
     },
     opts = {
       inlay_hints = {
-        enabled = true,
+        enabled = false,
       },
       setup = {
         ts_ls = function(_, opts)
@@ -956,7 +956,7 @@ require('lazy').setup({
   },
 })
 
-vim.lsp.inlay_hint.enable()
+--[[ vim.lsp.inlay_hint.enable() ]]
 
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
